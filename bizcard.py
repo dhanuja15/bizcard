@@ -136,15 +136,25 @@ if select=="UPLOAD":
       cursor.execute(table_query)
       mydb.commit()
 
-      insert_query='''insert into bizcard_data(name, designation, company_name, contact, email, website, address, pincode, image)
-                                        values(?,?,?,?,?,?,?,?,?)'''
+      mydb = sqlite3.connect("bizcard.db")
+      cursor = mydb.cursor()
+      select_query = "SELECT * FROM bizcard_data WHERE name = ?"
+      cursor.execute(select_query, (text_data["NAME"][0],))
+      existing_data = cursor.fetchone()
 
-      datas=con_df.values.tolist()[0]
-      cursor.execute(insert_query,datas)
-      mydb.commit()
-
-      st.success("Table is saved successfully")
-
+      if existing_data:
+        # Display the existing data
+        st.write("This card holder's information already exists in the database:")
+        existing_df = pd.DataFrame([existing_data], columns=("NAME", "DESIGNATION", "COMPANY NAME", "CONTACT", "EMAIL", "WEBSITE", "ADDRESS", "PINCODE", "IMAGE"))
+        st.dataframe(existing_df)
+      else:
+        # Save the new data
+        insert_query = '''insert into bizcard_data(name, designation, company_name, contact, email, website, address, pincode, image)
+                          values(?,?,?,?,?,?,?,?,?)'''
+        datas = con_df.values.tolist()[0]
+        cursor.execute(insert_query, datas)
+        mydb.commit()
+        st.success("Table is saved successfully")
 
 if select == "VIEW AND MODIFY":
 
@@ -264,7 +274,3 @@ if select=="DELETE":
     cursor.execute(f"delete from bizcard_data where NAME='{name_}' and DESIGNATION='{dsgn}'")
     mydb.commit()
     st.warning("Deleted")
-
-
-
-
