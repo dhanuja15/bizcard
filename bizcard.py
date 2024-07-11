@@ -44,16 +44,14 @@ def text_extraction(text):
       dict["EMAIL_ID"].append(i)
 
     # WEBSITE_URL
-    if "www " in i.lower() or "www." in i.lower():
-        dict["WEBSITE"].append(i)
-    elif "WWW" in i:
-        dict["WEBSITE"].append(text[ind-1] + "." + text[ind])
+    website_pattern = re.compile(r'(www\.[^\s]+)')
+    if re.search(website_pattern, i):
+      dict["WEBSITE"].append(i)
 
     #PINCODE
-    if len(i) >= 6 and i.isdigit():
-        dict["PINCODE"].append(i)
-    elif re.findall("[a-zA-Z]{9} +[0-9]", i):
-        dict["PINCODE"].append(i[10:])
+    pincode_pattern = re.compile(r'\b\d{6}\b')
+    if re.search(pincode_pattern, i):
+      dict["PINCODE"].append(i)
 
     #COMPANY NAME
     elif ind == len(text) - 1:
@@ -86,7 +84,7 @@ with st.sidebar:
 
 if select=="HOME":
   st.subheader(":violet[Welcome to the BizCardX App!]")
-  st.markdown('### Bizcard is a Python application designed to extract information from business cards. It utilizes various technologies such as :blue[Streamlit, Python, EasyOCR , PIL and MySQL] database to achieve this functionality.')
+  st.markdown('### Bizcard is a Python application designed to extract information from business cards. It utilizes various technologies such as :blue[Streamlit, Python, EasyOCR , PIL and SQLite] database to achieve this functionality.')
   st.write("")
   st.write("")
   st.write("")
@@ -95,7 +93,7 @@ if select=="HOME":
   st.write("")
   st.write("")
   st.subheader(':violet[Technologies Used]')
-  st.write('### :white[Python]  :white[Streamlit] :white[EasyOCR]  :white[PIL(Python Imaging Library)]  :white[MySQL]')
+  st.write('### :white[Python]  :white[Streamlit] :white[EasyOCR]  :white[PIL(Python Imaging Library)]  :white[SQLite3]')
   st.write("EasyOCR is an open-source optical character recognition (OCR) library that enables developers to easily extract text from images."
   "EasyOCR uses deep learning techniques to accurately recognize text in images, making it a powerful tool for tasks such as document processing, image captioning, and text extraction from scanned documents.")
 
